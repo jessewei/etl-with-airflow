@@ -1,29 +1,35 @@
 version: '2'
 services:
-  postgres:
-      image: postgres:9.6
-      environment:
+    postgres:
+        image: postgres:9.6
+        environment:
           - POSTGRES_USER=airflow
           - POSTGRES_PASSWORD=airflow
           - POSTGRES_DB=airflow
-      ports:
+        ports:
           - 5432:5432
-      volumes:
+        volumes:
           - ./examples/do-this-first/database_user.sql:/docker-entrypoint-initdb.d/database_user.sql
           - ./examples/do-this-first/dwh_tables.sql:/docker-entrypoint-initdb.d/dwh_tables.sql
           - ./examples/do-this-first/populate_tables.sql:/docker-entrypoint-initdb.d/populate_tables.sql
-  webserver:
-      image: puckel/docker-airflow:1.8.0
-      restart: always
-      depends_on:
+    webserver:
+        image: puckel/docker-airflow:latest
+        #image: puckel/docker-airflow:1.8.0
+        restart: always
+        depends_on:
           - postgres
-      environment:
+        environment:
           - LOAD_EX=n
           - EXECUTOR=Local
-      volumes:
+          - AIRFLOW__CORE__FERNET_KEY=xfaECYb20a2PzNTcIYXFXztTlaEVD43KwUoXeer_83k=
+          - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+        volumes:
           - ./examples/etl-example/dags:/usr/local/airflow/dags
           - ./examples/etl-example/sql:/usr/local/airflow/sql
-      ports:
+          - ./script:/usr/local/airflow/script
+          - ./examples/etl-example/requirements.txt:/requirements.txt
+        ports:
           - 8080:8080
-      command: webserver
+        command: webserver
+
 

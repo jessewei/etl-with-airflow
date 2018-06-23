@@ -70,13 +70,16 @@ class PostgresToPostgresOperator(BaseOperator):
         cursor = conn.cursor()
         cursor.execute(self.sql, self.parameters)
 
+        
         if self.pg_preoperator:
             logging.info("Running Postgres preoperator")
             dest_pg.run(self.pg_preoperator)
 
         logging.info("Inserting rows into Postgres")
-
-        dest_pg.insert_rows(table=self.pg_table, rows=cursor)
+        # test by jesse
+        # from IPython import embed; embed()
+        if cursor.rowcount > 0:
+            dest_pg.insert_rows(table=self.pg_table, rows=cursor)
 
         if self.pg_postoperator:
             logging.info("Running Postgres postoperator")
