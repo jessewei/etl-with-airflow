@@ -59,12 +59,18 @@ CREATE TABLE staging.audit_runs (
 GRANT USAGE ON SCHEMA staging TO dwh_svc_account;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA staging TO dwh_svc_account;
 
+-- Updated by jesse
+GRANT USAGE ON SCHEMA staging TO db_owner;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA staging TO db_owner;
+
 --SELECT partman.create_parent('staging.order_info', 'partition_dtm', 'time', 'daily', NULL, 4, true, to_char((CURRENT_TIMESTAMP - INTERVAL '90 days'), 'YYYY-MM-DD') );
 --SELECT partman.create_parent('staging.orderline', 'partition_dtm', 'time', 'daily', NULL, 4, true, to_char((CURRENT_TIMESTAMP - INTERVAL '90 days'), 'YYYY-MM-DD' ) );
 --UPDATE partman.part_config set retention = '90', retention_schema = NULL, retention_keep_table = false, retention_keep_index = false;
 
 CREATE SEQUENCE seq_customer START 1;
 GRANT USAGE, SELECT ON SEQUENCE seq_customer TO dwh_svc_account;
+
+GRANT USAGE, SELECT ON SEQUENCE seq_customer TO db_owner;
 
 CREATE TABLE dwh.dim_customer (
     customer_key  INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('seq_customer'),
@@ -78,6 +84,7 @@ CREATE TABLE dwh.dim_customer (
 
 CREATE SEQUENCE seq_product START 1;
 GRANT USAGE, SELECT ON SEQUENCE seq_product TO dwh_svc_account;
+GRANT USAGE, SELECT ON SEQUENCE seq_product TO db_owner;
 
 CREATE TABLE dwh.dim_product (
     product_key  INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('seq_product'),
@@ -129,6 +136,8 @@ CREATE TABLE dwh.fact_orderline (
 
 GRANT USAGE ON SCHEMA dwh TO dwh_svc_account;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA dwh TO dwh_svc_account;
+GRANT USAGE ON SCHEMA dwh TO db_owner;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA dwh TO db_owner;
 
 INSERT INTO dwh.dim_date(
     date_pk,

@@ -13,3 +13,5 @@ fi
 echo "Removing old database and user first"
 psql -f database_user.sql
 
+# create SQL default lib
+psql -f SP_CHK_UNIQ.ddl
